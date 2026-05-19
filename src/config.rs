@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default)]
 pub struct Config {
     #[serde(default)]
     pub store: StoreConfig,
@@ -44,14 +45,6 @@ fn default_compression_level() -> i32 {
     3
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            store: StoreConfig::default(),
-            remote: None,
-        }
-    }
-}
 
 impl Default for StoreConfig {
     fn default() -> Self {

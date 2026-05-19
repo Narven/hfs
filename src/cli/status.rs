@@ -50,8 +50,8 @@ pub fn run(cwd: &Path) -> Result<()> {
     if !manifests.is_empty() {
         println!("\n  Stored files:");
         for mh in &manifests {
-            if let Ok(data) = store.get_manifest(mh) {
-                if let Ok(m) = Manifest::deserialize(&data) {
+            if let Ok(data) = store.get_manifest(mh)
+                && let Ok(m) = Manifest::deserialize(&data) {
                     println!(
                         "    {} ({}, {} chunks)",
                         crate::cas::hash::hash_to_hex(mh),
@@ -59,7 +59,6 @@ pub fn run(cwd: &Path) -> Result<()> {
                         m.chunks.len(),
                     );
                 }
-            }
         }
     }
 

@@ -88,25 +88,20 @@ fn collect_recursive(dir: &Path, hashes: &mut Vec<[u8; 32]>) -> Result<()> {
         let entry = entry?;
         let path = entry.path();
 
-        if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-            if name.starts_with('.') {
+        if let Some(name) = path.file_name().and_then(|n| n.to_str())
+            && name.starts_with('.') {
                 continue;
             }
-        }
 
         if path.is_dir() {
             collect_recursive(&path, hashes)?;
-        } else if path.is_file() {
-            if let Ok(data) = std::fs::read(&path) {
-                if Pointer::is_pointer(&data) {
-                    if let Ok(text) = std::str::from_utf8(&data) {
-                        if let Ok(ptr) = Pointer::decode(text) {
+        } else if path.is_file()
+            && let Ok(data) = std::fs::read(&path)
+                && Pointer::is_pointer(&data)
+                    && let Ok(text) = std::str::from_utf8(&data)
+                        && let Ok(ptr) = Pointer::decode(text) {
                             hashes.push(ptr.oid);
                         }
-                    }
-                }
-            }
-        }
     }
     Ok(())
 }

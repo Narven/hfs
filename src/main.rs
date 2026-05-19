@@ -1,6 +1,6 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Parser)]
 #[command(
@@ -101,7 +101,7 @@ fn main() -> Result<()> {
     }
 }
 
-fn find_hfs_dir(cwd: &PathBuf) -> Result<PathBuf> {
+fn find_hfs_dir(cwd: &Path) -> Result<PathBuf> {
     hfs::config::Config::find_hfs_dir(cwd).ok_or_else(|| {
         anyhow::anyhow!("not an HFS repository (no .hfs directory found)\nRun `hfs init` first.")
     })

@@ -62,35 +62,30 @@ pub async fn run(cwd: &Path) -> Result<()> {
 
 fn collect_pointer_manifest_hashes(cwd: &Path) -> Result<Vec<[u8; 32]>> {
     let mut hashes = Vec::new();
-    collect_pointers_recursive(cwd, cwd, &mut hashes)?;
+    collect_pointers_recursive(cwd, &mut hashes)?;
     Ok(hashes)
 }
 
-fn collect_pointers_recursive(root: &Path, dir: &Path, hashes: &mut Vec<[u8; 32]>) -> Result<()> {
+fn collect_pointers_recursive(dir: &Path, hashes: &mut Vec<[u8; 32]>) -> Result<()> {
     for entry in std::fs::read_dir(dir)? {
         let entry = entry?;
         let path = entry.path();
 
         // Skip hidden directories
-        if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-            if name.starts_with('.') {
+        if let Some(name) = path.file_name().and_then(|n| n.to_str())
+            && name.starts_with('.') {
                 continue;
             }
-        }
 
         if path.is_dir() {
-            collect_pointers_recursive(root, &path, hashes)?;
-        } else if path.is_file() {
-            if let Ok(data) = std::fs::read(&path) {
-                if Pointer::is_pointer(&data) {
-                    if let Ok(text) = std::str::from_utf8(&data) {
-                        if let Ok(ptr) = Pointer::decode(text) {
+            collect_pointers_recursive(&path, hashes)?;
+        } else if path.is_file()
+            && let Ok(data) = std::fs::read(&path)
+                && Pointer::is_pointer(&data)
+                    && let Ok(text) = std::str::from_utf8(&data)
+                        && let Ok(ptr) = Pointer::decode(text) {
                             hashes.push(ptr.oid);
                         }
-                    }
-                }
-            }
-        }
     }
     Ok(())
 }
