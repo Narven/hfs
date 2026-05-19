@@ -3,8 +3,8 @@ use async_trait::async_trait;
 use aws_sdk_s3::Client;
 use aws_sdk_s3::primitives::ByteStream;
 
-use crate::cas::hash::{hash_to_hex, hex_to_hash};
 use super::Backend;
+use crate::cas::hash::{hash_to_hex, hex_to_hash};
 
 pub struct S3Backend {
     client: Client,
@@ -13,7 +13,12 @@ pub struct S3Backend {
 }
 
 impl S3Backend {
-    pub async fn new(bucket: String, prefix: Option<String>, region: Option<String>, endpoint: Option<String>) -> Result<Self> {
+    pub async fn new(
+        bucket: String,
+        prefix: Option<String>,
+        region: Option<String>,
+        endpoint: Option<String>,
+    ) -> Result<Self> {
         let mut config_loader = aws_config::defaults(aws_config::BehaviorVersion::latest());
 
         if let Some(ref region) = region {
@@ -67,7 +72,8 @@ impl Backend for S3Backend {
 
     async fn pull_chunk(&self, hash: &[u8; 32]) -> Result<Vec<u8>> {
         let key = self.object_key(hash);
-        let resp = self.client
+        let resp = self
+            .client
             .get_object()
             .bucket(&self.bucket)
             .key(&key)
@@ -81,7 +87,8 @@ impl Backend for S3Backend {
 
     async fn has_chunk(&self, hash: &[u8; 32]) -> Result<bool> {
         let key = self.object_key(hash);
-        match self.client
+        match self
+            .client
             .head_object()
             .bucket(&self.bucket)
             .key(&key)
@@ -111,7 +118,8 @@ impl Backend for S3Backend {
         let mut continuation_token: Option<String> = None;
 
         loop {
-            let mut req = self.client
+            let mut req = self
+                .client
                 .list_objects_v2()
                 .bucket(&self.bucket)
                 .prefix(&prefix);

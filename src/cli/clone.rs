@@ -17,19 +17,26 @@ pub async fn run(cwd: &Path) -> Result<()> {
     let config = Config::load(&hfs_dir)?;
     let store = Store::new(&hfs_dir);
 
-    let remote = config.remote.as_ref()
+    let remote = config
+        .remote
+        .as_ref()
         .ok_or_else(|| anyhow::anyhow!("no remote configured in .hfs/config.toml"))?;
 
     let backend: Arc<dyn crate::backend::Backend> = match remote.backend.as_str() {
         "s3" => {
-            let bucket = remote.bucket.clone()
+            let bucket = remote
+                .bucket
+                .clone()
                 .ok_or_else(|| anyhow::anyhow!("S3 backend requires 'bucket' in config"))?;
-            Arc::new(S3Backend::new(
-                bucket,
-                remote.prefix.clone(),
-                remote.region.clone(),
-                remote.endpoint.clone(),
-            ).await?)
+            Arc::new(
+                S3Backend::new(
+                    bucket,
+                    remote.prefix.clone(),
+                    remote.region.clone(),
+                    remote.endpoint.clone(),
+                )
+                .await?,
+            )
         }
         other => anyhow::bail!("unsupported backend: {other}"),
     };
@@ -41,10 +48,7 @@ pub async fn run(cwd: &Path) -> Result<()> {
         return Ok(());
     }
 
-    println!(
-        "Fetching chunks for {} file(s)...",
-        manifest_hashes.len()
-    );
+    println!("Fetching chunks for {} file(s)...", manifest_hashes.len());
 
     let engine = TransferEngine::new(Store::new(&hfs_dir), backend);
     let (pulled, skipped) = engine.pull(&manifest_hashes).await?;

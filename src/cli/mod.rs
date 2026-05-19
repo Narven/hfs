@@ -1,9 +1,9 @@
+pub mod clone;
+pub mod gc;
 pub mod init;
+pub mod ls_files;
+pub mod pull;
+pub mod push;
+pub mod status;
 pub mod track;
 pub mod untrack;
-pub mod push;
-pub mod pull;
-pub mod clone;
-pub mod status;
-pub mod gc;
-pub mod ls_files;

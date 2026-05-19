@@ -58,9 +58,7 @@ enum Commands {
 
 fn main() -> Result<()> {
     tracing_subscriber::fmt()
-        .with_env_filter(
-            tracing_subscriber::EnvFilter::from_default_env()
-        )
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .with_writer(std::io::stderr)
         .init();
 
@@ -104,8 +102,7 @@ fn main() -> Result<()> {
 }
 
 fn find_hfs_dir(cwd: &PathBuf) -> Result<PathBuf> {
-    hfs::config::Config::find_hfs_dir(cwd)
-        .ok_or_else(|| anyhow::anyhow!(
-            "not an HFS repository (no .hfs directory found)\nRun `hfs init` first."
-        ))
+    hfs::config::Config::find_hfs_dir(cwd).ok_or_else(|| {
+        anyhow::anyhow!("not an HFS repository (no .hfs directory found)\nRun `hfs init` first.")
+    })
 }

@@ -17,9 +17,9 @@ pub fn run(cwd: &Path, patterns: &[String]) -> Result<()> {
     let mut removed = Vec::new();
 
     for line in content.lines() {
-        let should_remove = patterns.iter().any(|pattern| {
-            line.starts_with(pattern) && line.contains("filter=hfs")
-        });
+        let should_remove = patterns
+            .iter()
+            .any(|pattern| line.starts_with(pattern) && line.contains("filter=hfs"));
 
         if should_remove {
             let pat = line.split_whitespace().next().unwrap_or("");

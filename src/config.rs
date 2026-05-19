@@ -31,10 +31,18 @@ pub struct RemoteConfig {
     pub prefix: Option<String>,
 }
 
-fn default_min_chunk() -> u32 { 256 * 1024 }
-fn default_avg_chunk() -> u32 { 1024 * 1024 }
-fn default_max_chunk() -> u32 { 4 * 1024 * 1024 }
-fn default_compression_level() -> i32 { 3 }
+fn default_min_chunk() -> u32 {
+    256 * 1024
+}
+fn default_avg_chunk() -> u32 {
+    1024 * 1024
+}
+fn default_max_chunk() -> u32 {
+    4 * 1024 * 1024
+}
+fn default_compression_level() -> i32 {
+    3
+}
 
 impl Default for Config {
     fn default() -> Self {

@@ -1,8 +1,6 @@
 mod utils;
 
-use criterion::{
-    BenchmarkId, Criterion, Throughput, criterion_group, criterion_main,
-};
+use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
 
 use sha2::{Digest, Sha256};
 use std::io::Write;
@@ -30,21 +28,13 @@ fn bench_hash(c: &mut Criterion) {
         let data = utils::generate_data(size, utils::SEED);
         group.throughput(Throughput::Bytes(size as u64));
 
-        group.bench_with_input(
-            BenchmarkId::new("blake3", label),
-            &data,
-            |b, data| {
-                b.iter(|| blake3::hash(data));
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("blake3", label), &data, |b, data| {
+            b.iter(|| blake3::hash(data));
+        });
 
-        group.bench_with_input(
-            BenchmarkId::new("sha256", label),
-            &data,
-            |b, data| {
-                b.iter(|| Sha256::digest(data));
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("sha256", label), &data, |b, data| {
+            b.iter(|| Sha256::digest(data));
+        });
     }
 
     group.finish();
@@ -93,8 +83,7 @@ fn bench_decompress(c: &mut Criterion) {
         let data = utils::generate_data(size, utils::SEED);
         let zstd_compressed = zstd::encode_all(&data[..], 3).unwrap();
         let gzip_compressed = {
-            let mut enc =
-                flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+            let mut enc = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
             enc.write_all(&data).unwrap();
             enc.finish().unwrap()
         };
@@ -144,17 +133,13 @@ fn bench_ingest(c: &mut Criterion) {
         let data = utils::generate_data(size, utils::SEED);
         group.throughput(Throughput::Bytes(size as u64));
 
-        group.bench_with_input(
-            BenchmarkId::new("hfs_ingest", label),
-            &data,
-            |b, data| {
-                let dir = tempfile::tempdir().unwrap();
-                let store = utils::temp_store(dir.path());
-                b.iter(|| {
-                    cas::ingest_bytes(&store, data).unwrap();
-                });
-            },
-        );
+        group.bench_with_input(BenchmarkId::new("hfs_ingest", label), &data, |b, data| {
+            let dir = tempfile::tempdir().unwrap();
+            let store = utils::temp_store(dir.path());
+            b.iter(|| {
+                cas::ingest_bytes(&store, data).unwrap();
+            });
+        });
     }
 
     group.finish();

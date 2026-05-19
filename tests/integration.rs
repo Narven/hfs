@@ -1,8 +1,8 @@
-use std::sync::Arc;
-use hfs::cas::{self, Store};
 use hfs::backend::local::LocalBackend;
+use hfs::cas::{self, Store};
 use hfs::pointer::Pointer;
 use hfs::transfer::engine::TransferEngine;
+use std::sync::Arc;
 
 #[test]
 fn end_to_end_small_file() {
@@ -65,8 +65,7 @@ fn deduplication_across_versions() {
     let objects_v1 = store.list_objects().unwrap().len();
 
     // Modify a small portion at the end
-    data_v1[3 * 1024 * 1024..3 * 1024 * 1024 + 1024]
-        .copy_from_slice(&[0xBB; 1024]);
+    data_v1[3 * 1024 * 1024..3 * 1024 * 1024 + 1024].copy_from_slice(&[0xBB; 1024]);
 
     let (ptr_v2, _) = cas::ingest_bytes(&store, &data_v1).unwrap();
 
@@ -146,10 +145,7 @@ async fn transfer_push_pull_local_backend() {
     store_b.put_manifest(&pointer.oid, &manifest_data).unwrap();
 
     // Pull from remote to store B
-    let engine_b = TransferEngine::new(
-        Store::new(&dir.path().join("repo-b/.hfs")),
-        backend,
-    );
+    let engine_b = TransferEngine::new(Store::new(&dir.path().join("repo-b/.hfs")), backend);
     let (pulled, pull_skipped) = engine_b.pull(&[pointer.oid]).await.unwrap();
     assert!(pulled > 0);
     assert_eq!(pull_skipped, 0);

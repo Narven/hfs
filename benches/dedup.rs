@@ -78,8 +78,7 @@ fn dedup_storage_report() {
         utils::apply_edit(&mut v2_data, edit_pct, utils::SEED + 1);
         let (ptr_v2, _) = cas::ingest_bytes(&store, &v2_data).unwrap();
 
-        let hfs_total =
-            utils::store_objects_size(&store) + utils::store_manifests_size(&store);
+        let hfs_total = utils::store_objects_size(&store) + utils::store_manifests_size(&store);
         let lfs_total = (BASE_SIZE as u64) * 2; // LFS stores full blob for each version
 
         let savings_pct = if lfs_total > 0 {

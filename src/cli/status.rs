@@ -14,13 +14,18 @@ pub fn run(cwd: &Path) -> Result<()> {
     let objects = store.list_objects()?;
     let manifests = store.list_manifests()?;
 
-    let total_object_bytes: u64 = objects.iter().filter_map(|h| {
-        store.get_object(h).ok().map(|d| d.len() as u64)
-    }).sum();
+    let total_object_bytes: u64 = objects
+        .iter()
+        .filter_map(|h| store.get_object(h).ok().map(|d| d.len() as u64))
+        .sum();
 
     println!("HFS status:");
     println!("  Store:      {}", hfs_dir.display());
-    println!("  Objects:    {} ({} compressed)", objects.len(), format_bytes(total_object_bytes));
+    println!(
+        "  Objects:    {} ({} compressed)",
+        objects.len(),
+        format_bytes(total_object_bytes)
+    );
     println!("  Manifests:  {}", manifests.len());
 
     // List tracked files by scanning .gitattributes

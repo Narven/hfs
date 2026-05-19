@@ -15,10 +15,7 @@ use serde_json::json;
 
 const ITERATIONS: usize = 3;
 
-const FILE_SIZES: &[(usize, &str)] = &[
-    (10 << 20, "10 MB"),
-    (100 << 20, "100 MB"),
-];
+const FILE_SIZES: &[(usize, &str)] = &[(10 << 20, "10 MB"), (100 << 20, "100 MB")];
 
 const MULTI_FILE_COUNT: usize = 100;
 const MULTI_FILE_SIZE: usize = 1 << 20; // 1 MB each
@@ -122,11 +119,7 @@ struct ScenarioResult {
     extra: String,
 }
 
-fn scenario_add_commit(
-    root: &Path,
-    data: &[u8],
-    has_lfs: bool,
-) -> ScenarioResult {
+fn scenario_add_commit(root: &Path, data: &[u8], has_lfs: bool) -> ScenarioResult {
     let hfs_result = time_iterations(ITERATIONS, || {
         let repo = setup_hfs_repo(root, "hfs-add");
         write_bin_file(&repo, "large.bin", data);
@@ -162,11 +155,7 @@ fn scenario_add_commit(
 // Scenario: version edit (dedup advantage)
 // ---------------------------------------------------------------------------
 
-fn scenario_version_edit(
-    root: &Path,
-    base_data: &[u8],
-    has_lfs: bool,
-) -> ScenarioResult {
+fn scenario_version_edit(root: &Path, base_data: &[u8], has_lfs: bool) -> ScenarioResult {
     let size = base_data.len();
     let mut edited = base_data.to_vec();
     utils::apply_edit(&mut edited, 0.01, utils::SEED + 99);
@@ -201,7 +190,8 @@ fn scenario_version_edit(
     git_add_commit(&hfs_repo, "v2");
 
     let hfs_store = hfs::cas::Store::new(&hfs_repo.join(".hfs"));
-    let hfs_stored = utils::store_objects_size(&hfs_store) + utils::store_manifests_size(&hfs_store);
+    let hfs_stored =
+        utils::store_objects_size(&hfs_store) + utils::store_manifests_size(&hfs_store);
     let lfs_stored = (size as u64) * 2;
     let savings = (1.0 - hfs_stored as f64 / lfs_stored as f64) * 100.0;
     let _ = std::fs::remove_dir_all(&hfs_repo);
@@ -227,10 +217,7 @@ fn scenario_version_edit(
 // Scenario: multi-file batch (filter-process vs fork-per-file)
 // ---------------------------------------------------------------------------
 
-fn scenario_multi_file(
-    root: &Path,
-    has_lfs: bool,
-) -> ScenarioResult {
+fn scenario_multi_file(root: &Path, has_lfs: bool) -> ScenarioResult {
     let files: Vec<Vec<u8>> = (0..MULTI_FILE_COUNT as u64)
         .map(|i| utils::generate_data(MULTI_FILE_SIZE, utils::SEED + i))
         .collect();
@@ -267,7 +254,11 @@ fn scenario_multi_file(
         hfs_time: hfs_result.median,
         lfs_time: lfs_result.map(|r| r.median),
         speedup,
-        extra: format!("{} x {} each", MULTI_FILE_COUNT, utils::human_bytes(MULTI_FILE_SIZE as u64)),
+        extra: format!(
+            "{} x {} each",
+            MULTI_FILE_COUNT,
+            utils::human_bytes(MULTI_FILE_SIZE as u64)
+        ),
     }
 }
 
@@ -345,10 +336,7 @@ fn write_json_results(rows: &[Row]) {
 fn main() {
     let hfs_bin = hfs_binary();
     if !hfs_bin.exists() {
-        eprintln!(
-            "ERROR: hfs binary not found at {}",
-            hfs_bin.display()
-        );
+        eprintln!("ERROR: hfs binary not found at {}", hfs_bin.display());
         eprintln!("Run `cargo build --release` first.");
         std::process::exit(1);
     }
@@ -372,7 +360,10 @@ fn main() {
             size: label.into(),
             hfs: fmt_duration(r.hfs_time),
             lfs: r.lfs_time.map(fmt_duration).unwrap_or_else(|| "-".into()),
-            speedup: r.speedup.map(|s| format!("{:.1}x", s)).unwrap_or_else(|| "-".into()),
+            speedup: r
+                .speedup
+                .map(|s| format!("{:.1}x", s))
+                .unwrap_or_else(|| "-".into()),
             extra: r.extra,
         });
     }
@@ -386,7 +377,10 @@ fn main() {
             size: label.into(),
             hfs: fmt_duration(r.hfs_time),
             lfs: r.lfs_time.map(fmt_duration).unwrap_or_else(|| "-".into()),
-            speedup: r.speedup.map(|s| format!("{:.1}x", s)).unwrap_or_else(|| "-".into()),
+            speedup: r
+                .speedup
+                .map(|s| format!("{:.1}x", s))
+                .unwrap_or_else(|| "-".into()),
             extra: r.extra,
         });
     }
@@ -399,7 +393,10 @@ fn main() {
             size: "1 MB".into(),
             hfs: fmt_duration(r.hfs_time),
             lfs: r.lfs_time.map(fmt_duration).unwrap_or_else(|| "-".into()),
-            speedup: r.speedup.map(|s| format!("{:.1}x", s)).unwrap_or_else(|| "-".into()),
+            speedup: r
+                .speedup
+                .map(|s| format!("{:.1}x", s))
+                .unwrap_or_else(|| "-".into()),
             extra: r.extra,
         });
     }

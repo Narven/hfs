@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use async_trait::async_trait;
 use std::path::{Path, PathBuf};
 
-use crate::cas::hash::{hash_to_hex, hex_to_hash};
 use super::Backend;
+use crate::cas::hash::{hash_to_hex, hex_to_hash};
 
 /// A local filesystem backend (for testing or local-network shared storage).
 pub struct LocalBackend {

@@ -1,7 +1,7 @@
 use fastcdc::v2020::FastCDC;
 
-const MIN_CHUNK_SIZE: u32 = 256 * 1024;     // 256 KB
-const AVG_CHUNK_SIZE: u32 = 1024 * 1024;    // 1 MB
+const MIN_CHUNK_SIZE: u32 = 256 * 1024; // 256 KB
+const AVG_CHUNK_SIZE: u32 = 1024 * 1024; // 1 MB
 const MAX_CHUNK_SIZE: u32 = 4 * 1024 * 1024; // 4 MB
 
 /// Chunk data using FastCDC content-defined chunking.
