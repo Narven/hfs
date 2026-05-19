@@ -1,0 +1,25 @@
+# Rust build artifacts
+/target
+
+# Benchmark output (generated, not source)
+bench_results.json
+
+# HFS storage dir (if this repo itself is tracked by hfs)
+.hfs/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editor
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
