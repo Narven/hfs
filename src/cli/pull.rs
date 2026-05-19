@@ -73,19 +73,21 @@ fn collect_pointers_recursive(dir: &Path, hashes: &mut Vec<[u8; 32]>) -> Result<
 
         // Skip hidden directories
         if let Some(name) = path.file_name().and_then(|n| n.to_str())
-            && name.starts_with('.') {
-                continue;
-            }
+            && name.starts_with('.')
+        {
+            continue;
+        }
 
         if path.is_dir() {
             collect_pointers_recursive(&path, hashes)?;
         } else if path.is_file()
             && let Ok(data) = std::fs::read(&path)
-                && Pointer::is_pointer(&data)
-                    && let Ok(text) = std::str::from_utf8(&data)
-                        && let Ok(ptr) = Pointer::decode(text) {
-                            hashes.push(ptr.oid);
-                        }
+            && Pointer::is_pointer(&data)
+            && let Ok(text) = std::str::from_utf8(&data)
+            && let Ok(ptr) = Pointer::decode(text)
+        {
+            hashes.push(ptr.oid);
+        }
     }
     Ok(())
 }

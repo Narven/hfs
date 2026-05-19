@@ -2,8 +2,7 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[derive(Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Config {
     #[serde(default)]
     pub store: StoreConfig,
@@ -44,7 +43,6 @@ fn default_max_chunk() -> u32 {
 fn default_compression_level() -> i32 {
     3
 }
-
 
 impl Default for StoreConfig {
     fn default() -> Self {

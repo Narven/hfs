@@ -51,14 +51,15 @@ pub fn run(cwd: &Path) -> Result<()> {
         println!("\n  Stored files:");
         for mh in &manifests {
             if let Ok(data) = store.get_manifest(mh)
-                && let Ok(m) = Manifest::deserialize(&data) {
-                    println!(
-                        "    {} ({}, {} chunks)",
-                        crate::cas::hash::hash_to_hex(mh),
-                        format_bytes(m.file_size),
-                        m.chunks.len(),
-                    );
-                }
+                && let Ok(m) = Manifest::deserialize(&data)
+            {
+                println!(
+                    "    {} ({}, {} chunks)",
+                    crate::cas::hash::hash_to_hex(mh),
+                    format_bytes(m.file_size),
+                    m.chunks.len(),
+                );
+            }
         }
     }
 
